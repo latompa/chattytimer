@@ -11,7 +11,39 @@ export default function ActiveTimer({ config, onCancel }) {
     const phaseRef = useRef(phase);
     const currentSetRef = useRef(currentSet);
     const isActiveRef = useRef(isActive);
+    const wakeLockRef = useRef(null);
 
+    // Request wake lock to prevent screen from sleeping
+    useEffect(() => {
+        const requestWakeLock = async () => {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLockRef.current = await navigator.wakeLock.request('screen');
+                }
+            } catch (err) {
+                console.error(`Wake Lock error: ${err.name}, ${err.message}`);
+            }
+        };
+
+        requestWakeLock();
+
+        const handleVisibilityChange = async () => {
+            // Re-request if document becomes visible again
+            if (document.visibilityState === 'visible') {
+                requestWakeLock();
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            if (wakeLockRef.current) {
+                wakeLockRef.current.release().catch(console.error);
+                wakeLockRef.current = null;
+            }
+        };
+    }, []);
     useEffect(() => { timeLeftRef.current = timeLeft; }, [timeLeft]);
     useEffect(() => { phaseRef.current = phase; }, [phase]);
     useEffect(() => { currentSetRef.current = currentSet; }, [currentSet]);
