@@ -100,8 +100,6 @@ export default function TimerConfig({ onStart }) {
             const utterance = new SpeechSynthesisUtterance("ready to work out");
             utterance.voice = voiceToUse;
             utterance.lang = voiceToUse.lang;
-            utterance.rate = 1.0;
-            utterance.pitch = 1.1;
             window.speechSynthesis.speak(utterance);
         }
     };

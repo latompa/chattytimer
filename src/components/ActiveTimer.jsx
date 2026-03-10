@@ -71,8 +71,6 @@ export default function ActiveTimer({ config, onCancel }) {
             }
         }
 
-        utterance.rate = 1.0;
-        utterance.pitch = 1.1; // Slightly higher pitch often sounds less harsh
         window.speechSynthesis.speak(utterance);
     };
 
