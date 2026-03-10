@@ -138,8 +138,8 @@ export default function ActiveTimer({ config, onCancel }) {
             }
         } else if (currentPhase === 'REST') {
             setCurrentSet((prev) => prev + 1);
-            setPhase('PREPARE');
-            setTimeLeft(5);
+            setPhase('WORK');
+            setTimeLeft(config.duration);
         }
     };
 
