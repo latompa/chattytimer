@@ -61,10 +61,14 @@ export default function ActiveTimer({ config, onCancel }) {
 
         if (selectedVoice) {
             utterance.voice = selectedVoice;
+            utterance.lang = selectedVoice.lang;
         } else {
             // Fallback to the first available English voice if the config is missing or invalid
             const englishVoice = voices.find(v => v.lang.startsWith('en'));
-            if (englishVoice) utterance.voice = englishVoice;
+            if (englishVoice) {
+                utterance.voice = englishVoice;
+                utterance.lang = englishVoice.lang;
+            }
         }
 
         utterance.rate = 1.0;
