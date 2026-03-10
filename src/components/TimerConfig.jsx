@@ -36,11 +36,20 @@ const StepperInput = ({ id, label, value, onChange, min, step = 1 }) => {
 };
 
 export default function TimerConfig({ onStart }) {
-    const [sets, setSets] = useState('3');
-    const [duration, setDuration] = useState('20');
-    const [rest, setRest] = useState('40');
+    const [sets, setSets] = useState(() => localStorage.getItem('timer_sets') || '3');
+    const [duration, setDuration] = useState(() => localStorage.getItem('timer_duration') || '20');
+    const [rest, setRest] = useState(() => localStorage.getItem('timer_rest') || '40');
     const [voices, setVoices] = useState([]);
-    const [selectedVoice, setSelectedVoice] = useState('');
+    const [selectedVoice, setSelectedVoice] = useState(() => localStorage.getItem('timer_voice') || '');
+
+    useEffect(() => {
+        localStorage.setItem('timer_sets', sets);
+        localStorage.setItem('timer_duration', duration);
+        localStorage.setItem('timer_rest', rest);
+        if (selectedVoice) {
+            localStorage.setItem('timer_voice', selectedVoice);
+        }
+    }, [sets, duration, rest, selectedVoice]);
 
     useEffect(() => {
         const loadVoices = () => {
@@ -52,8 +61,9 @@ export default function TimerConfig({ onStart }) {
 
                 setVoices(englishVoices);
 
-                // Pre-select a good default if nothing is selected
-                if (!selectedVoice) {
+                // Pre-select a good default if nothing is selected or if saved voice is invalid
+                const isValidVoice = availableVoices.some(v => v.name === selectedVoice);
+                if (!selectedVoice || !isValidVoice) {
                     const defaultVoice = englishVoices.find(
                         v => v.name.includes('Natural') || v.name.includes('Zira') || v.name.includes('Female')
                     );
