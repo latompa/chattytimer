@@ -152,16 +152,44 @@ export default function ActiveTimer({ config, onCancel }) {
         }
     };
 
+    const getTotalTimeForPhase = () => {
+        if (phase === 'PREPARE') return 5;
+        if (phase === 'WORK') return config.duration;
+        if (phase === 'REST') return config.rest;
+        return 1;
+    };
+
+    const getProgressPercentage = () => {
+        if (phase === 'DONE') return 100;
+        const total = getTotalTimeForPhase();
+        return ((total - timeLeft + 1) / total) * 100;
+    };
+
     const handleCancel = () => {
         window.speechSynthesis.cancel();
         onCancel();
-    };
+    };    
 
     return (
         <div className="card">
             <div className="timer-display">
-                <div className="set-tracker pulse">
-                    Set {currentSet} / {config.sets}
+                <div className="set-tracker">
+                    {Array.from({ length: config.sets }).map((_, i) => {
+                        const setNumber = i + 1;
+                        let segmentClass = "set-segment";
+                        if (setNumber < currentSet || phase === 'DONE') {
+                            segmentClass += " completed";
+                        } else if (setNumber === currentSet) {
+                            segmentClass += " active pulse";
+                        }
+                        return (
+                            <div key={i} className={segmentClass}>
+                                {setNumber === currentSet && phase !== 'DONE' && (
+                                    <div className="set-number">{setNumber}</div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
 
                 <div className="phase-text" data-phase={phase}>
@@ -171,8 +199,14 @@ export default function ActiveTimer({ config, onCancel }) {
                     {phase === 'DONE' && 'DONE'}
                 </div>
 
-                <div className="time-text">
-                    {phase === 'WORK' ? Math.max(0, config.duration - timeLeft + 1) : timeLeft}
+                <div className="progress-bar-container" data-phase={phase}>
+                    <div 
+                        className="progress-bar-fill"
+                        style={{ width: `${getProgressPercentage()}%` }}
+                    />
+                    <div className="time-text">
+                        {phase === 'WORK' ? Math.max(0, config.duration - timeLeft + 1) : timeLeft}
+                    </div>
                 </div>
             </div>
 

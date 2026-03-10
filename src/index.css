@@ -167,23 +167,87 @@ select option {
   color: #A855F7;
 }
 
+.progress-bar-container {
+  width: 100%;
+  max-width: 300px;
+  height: 140px;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.progress-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(94, 234, 212, 0.2);
+  transition: width 1s linear;
+}
+
+.progress-bar-container[data-phase="WORK"] .progress-bar-fill {
+  background: rgba(16, 185, 129, 0.2); /* success */
+}
+.progress-bar-container[data-phase="REST"] .progress-bar-fill {
+  background: rgba(59, 130, 246, 0.2); /* blue */
+}
+.progress-bar-container[data-phase="PREPARE"] .progress-bar-fill {
+  background: rgba(245, 158, 11, 0.2); /* warning */
+}
+.progress-bar-container[data-phase="DONE"] .progress-bar-fill {
+  background: rgba(168, 85, 247, 0.2); /* done */
+}
+
 .time-text {
   font-size: 6rem;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   line-height: 1;
   text-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 10;
 }
 
 .set-tracker {
-  display: inline-block;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-muted);
+  display: flex;
+  gap: 0.5rem;
   margin-bottom: 2rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.set-segment {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  transition: var(--transition);
+  position: relative;
+}
+
+.set-number {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--text-main);
+}
+
+.set-segment.active {
+  background: var(--primary);
+  box-shadow: 0 0 10px rgba(94, 234, 212, 0.5);
+}
+
+.set-segment.completed {
+  background: var(--success);
 }
 
 .controls-grid {
